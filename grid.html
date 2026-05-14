@@ -1,0 +1,54 @@
+<!-- w,a,p  for inline ,internal and external css using the basic property --
+w.a.p to perform animation effect using transform property in css
+w,a,p for grid layout using css   -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>grid demo</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .parent {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: auto auto auto;
+            background-color:indianred;
+            padding: 10px;
+
+       
+        }
+
+        .child {
+            height: 50px;
+            width: 30px;
+            background-color: black;
+            color: bisque;
+            text-align: center;
+          
+    }
+    </style>
+</head>
+
+<body>
+    <div class="parent">
+        <div class="child">A</div>
+        <div class="child">B</div>
+        <div class="child">C</div>
+        <div class="child">D</div>
+        <div class="child">E</div>
+        <div class="child">F</div>
+        
+    </div>
+</body>
+
+</html>
