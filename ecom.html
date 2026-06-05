@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopHub - E-Commerce Store</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .navbar-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .nav-link {
+            color: white !important;
+            margin: 0 10px;
+            transition: opacity 0.3s;
+        }
+        .nav-link:hover {
+            opacity: 0.8;
+        }
+        .search-container {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 20px;
+        }
+        .search-input {
+            border-radius: 25px;
+            border: none;
+            padding: 8px 20px;
+        }
+        .product-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        .product-img {
+            height: 200px;
+            object-fit: cover;
+            background-color: #e9ecef;
+        }
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .cart-item {
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 0;
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        .price {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+        }
+        .offcanvas-header {
+            background-color: #667eea;
+            color: white;
+        }
+        .btn-primary {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+        .btn-primary:hover {
+            background-color: #764ba2;
+            border-color: #764ba2;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .stats-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            margin: 40px 0;
+            border-radius: 10px;
+        }
+        .stat-box {
+            text-align: center;
+            padding: 20px;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .about-section {
+            padding: 40px 0;
+        }
+        .contact-form {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white" href="#" onclick="showSection('home')"><i class="bi">🛍️</i> ShopHub</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="search-container">
+                    <input type="text" class="search-input form-control" id="searchInput" placeholder="Search products...">
+                </div>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('home')">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('about')">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('revenue')">Revenue</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('contact')">Contact Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-light position-relative" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+                            🛒 Cart
+                            <span class="cart-count" id="cartCount" style="display: none;">0</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <div id="home" class="section active">
+        <!-- Hero Section -->
+        <div class="hero mb-5">
+            <h1>Welcome to ShopHub</h1>
+            <p class="lead">Discover amazing tech products at great prices</p>
+        </div>
+
+        <!-- Products Section -->
+        <div class="container mb-5">
+            <h2 class="mb-4">Featured Products</h2>
+            <div class="row" id="productsContainer">
+                <!-- Products will be inserted here -->
+            </div>
+            <div id="noResults" class="no-results" style="display: none;">
+                <h4>No products found</h4>
+                <p>Try adjusting your search terms</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Us Section -->
+    <div id="about" class="section">
+        <div class="container about-section">
+            <h1 class="mb-4">About ShopHub</h1>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <h3>Who We Are</h3>
+                    <p>ShopHub is a leading online electronics retailer specializing in premium tech products and accessories. Founded in 2020, we've been committed to bringing the latest technology to customers worldwide.</p>
+                    <p>Our mission is to make quality tech products accessible, affordable, and convenient for everyone.</p>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <h3>Why Choose Us?</h3>
+                    <ul class="list-unstyled">
+                        <li>✓ Authentic products from verified suppliers</li>
+                        <li>✓ Best prices and frequent discounts</li>
+                        <li>✓ Fast and reliable shipping</li>
+                        <li>✓ 30-day money-back guarantee</li>
+                        <li>✓ 24/7 customer support</li>
+                        <li>✓ Secure and encrypted transactions</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-md-4 mb-4">
+                    <h5>Quality Assurance</h5>
+                    <p>Every product undergoes rigorous quality checks before shipment to ensure you receive the best.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Expert Support</h5>
+                    <p>Our team of tech experts is always ready to help you find the perfect product for your needs.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Eco-Friendly</h5>
+                    <p>We're committed to sustainable packaging and reducing our carbon footprint.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue Section -->
+    <div id="revenue" class="section">
+        <div class="container">
+            <h1 class="mb-4 mt-4">Business Revenue</h1>
+            <div class="stats-container">
+                <div class="row">
+                    <div class="col-md-3 stat-box">
+                        <div class="stat-number" id="totalRevenue">₹2,18,00,000</div>
+                        <div>Total Revenue (2024)</div>
+                    </div>
+                    <div class="col-md-3 stat-box">
+                        <div class="stat-number" id="totalOrders">15,240</div>
+                        <div>Total Orders</div>
+                    </div>
+                    <div class="col-md-3 stat-box">
+                        <div class="stat-number" id="totalItems">48,650</div>
+                        <div>Items Sold</div>
+                    </div>
+                    <div class="col-md-3 stat-box">
+                        <div class="stat-number" id="avgOrder">₹14,280</div>
+                        <div>Average Order</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <h4>Annual Performance (2024)</h4>
+                    <ul class="list-group">
+                        <li class="list-group-item">Q1 Revenue: <strong>₹37,50,000</strong></li>
+                        <li class="list-group-item">Q2 Revenue: <strong>₹43,40,000</strong></li>
+                        <li class="list-group-item">Q3 Revenue: <strong>₹48,30,000</strong></li>
+                        <li class="list-group-item">Q4 Revenue: <strong>₹52,40,000</strong></li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h4>Key Metrics</h4>
+                    <ul class="list-group">
+                        <li class="list-group-item">Active Customers: <strong>45,000+</strong></li>
+                        <li class="list-group-item">Product Categories: <strong>15+</strong></li>
+                        <li class="list-group-item">Customer Satisfaction: <strong>4.8/5</strong></li>
+                        <li class="list-group-item">Average Delivery Time: <strong>2-3 Days</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Us Section -->
+    <div id="contact" class="section">
+        <div class="container">
+            <h1 class="mb-4 mt-4">Contact Us</h1>
+            <div class="row mb-5">
+                <div class="col-md-4">
+                    <h5>📞 Phone</h5>
+                    <p>+91 8160659078</p>
+                    <p>Monday - Friday, 9AM - 6PM</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>📧 Email</h5>
+                    <p>support@shophub.com</p>
+                    <p>info@shophub.com</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>📍 Address</h5>
+                    <p>123 Tech Street<br>NAVRANGPURA,AHM<br>INDIA</p>
+                </div>
+            </div>
+
+            <div class="contact-form">
+                <h3 class="mb-4">Send us a Message</h3>
+                <form id="contactForm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">Subject</label>
+                        <input type="text" class="form-control" id="subject" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message</label>
+                        <textarea class="form-control" id="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Offcanvas -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Shopping Cart</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div id="cartItems">
+                <div class="empty-cart">Your cart is empty</div>
+            </div>
+            <div id="cartSummary" style="display: none;">
+                <div class="mt-3 pt-3 border-top">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">₹0</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Tax (10%):</span>
+                        <span id="tax">₹0</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3" style="font-size: 1.25rem; font-weight: bold;">
+                        <span>Total:</span>
+                        <span id="total">₹0</span>
+                    </div>
+                    <button class="btn btn-success w-100 mb-2" onclick="checkout()">Checkout</button>
+                    <button class="btn btn-danger w-100" id="clearCartBtn">Clear Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 ShopHub. All rights reserved. | <a href="#" style="color: #667eea;">Privacy Policy</a> | <a href="#" style="color: #667eea;">Terms & Conditions</a></p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const products = [
+            { id: 1, name: 'Wireless Headphones Pro', price: 10799, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop' },
+            { id: 2, name: 'Apple Watch Series 8', price: 24999, image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=200&fit=crop' },
+            { id: 3, name: 'USB-C Lightning Cable', price: 1299, image: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300&h=200&fit=crop' },
+           // { id: 4, name: 'Premium Phone Case', price: 2499, image: 'https://images.unsplash.com/photo-1603561596411-07134e71a2a9?w=300&h=200&fit=crop' },
+            { id: 5, name: 'Tempered Glass Screen Protector', price: 999, image: 'https://images.unsplash.com/photo-1609034227505-5876f6aa4e90?w=300&h=200&fit=crop' },
+           // { id: 6, name: 'Wireless Charging Pad', price: 3299, image: 'https://images.unsplash.com/photo-1591290621512-2ec48d6d5883?w=300&h=200&fit=crop' },
+            //{ id: 7, name: '4K Webcam', price: 7499, image: 'https://images.unsplash.com/photo-1598184624046-c82c6b0b69d3?w=300&h=200&fit=crop' },
+            //{ id: 8, name: 'Gaming Mechanical Keyboard', price: 13299, image: 'https://images.unsplash.com/photo-1587829191301-a547e9e179ca?w=300&h=200&fit=crop' },
+            { id: 9, name: 'Wireless Gaming Mouse', price: 5799, image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=300&h=200&fit=crop' },
+            { id: 10, name: '32GB USB Flash Drive', price: 1699, image: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=300&h=200&fit=crop' },
+            //{ id: 11, name: 'Laptop Stand Aluminum', price: 3799, image: 'https://images.unsplash.com/photo-1589939705066-aeeed9980d0f?w=300&h=200&fit=crop' },
+            { id: 12, name: 'Portable Phone Speaker', price: 4599, image: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=300&h=200&fit=crop' },
+            { id: 13, name: 'Multi-Port USB Hub', price: 2999, image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=300&h=200&fit=crop' },
+            { id: 14, name: 'Portable SSD 1TB', price: 12499, image: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=300&h=200&fit=crop' },
+            //{ id: 15, name: 'USB-C Dock Station', price: 6699, image: 'https://images.unsplash.com/photo-1609033227505-aa8a01e78b8c?w=300&h=200&fit=crop' },
+            { id: 16, name: 'LED Ring Light 10"', price: 3399, image: 'https://images.unsplash.com/photo-1611532736579-6b16e2b50449?w=300&h=200&fit=crop' },
+            { id: 17, name: 'Wireless Earbuds Pro Max', price: 14999, image: 'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=300&h=200&fit=crop' },
+           // { id: 18, name: 'Phone Gimbal Stabilizer', price: 8399, image: 'https://images.unsplash.com/photo-1606986628025-35d57e735ae0?w=300&h=200&fit=crop' }
+        ];
+
+        let cart = [];
+        let totalOrders = 15240;
+        let totalItems = 48650;
+        let totalRevenue = 2180000;
+
+        // Show section
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // Render products
+        function renderProducts(productsToShow = products) {
+            const container = document.getElementById('productsContainer');
+            const noResults = document.getElementById('noResults');
+
+            if (productsToShow.length === 0) {
+                container.innerHTML = '';
+                noResults.style.display = 'block';
+                return;
+            }
+
+            noResults.style.display = 'none';
+            container.innerHTML = productsToShow.map(product => `
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card product-card h-100">
+                        <img src="${product.image}" class="card-img-top product-img" alt="${product.name}">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">${product.name}</h5>
+                            <p class="price mt-auto mb-3">₹${product.price.toLocaleString('en-IN')}</p>
+                            <button class="btn btn-primary" onclick="addToCart(${product.id})">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const filtered = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm)
+            );
+            renderProducts(filtered);
+        });
+
+        // Add to cart
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+
+            updateCart();
+        }
+
+        // Remove from cart
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCart();
+        }
+
+        // Update quantity
+        function updateQuantity(productId, quantity) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity = Math.max(1, quantity);
+                updateCart();
+            }
+        }
+
+        // Update cart display
+        function updateCart() {
+            const cartItemsDiv = document.getElementById('cartItems');
+            const cartSummaryDiv = document.getElementById('cartSummary');
+            const cartCountSpan = document.getElementById('cartCount');
+
+            if (cart.length === 0) {
+                cartItemsDiv.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+                cartSummaryDiv.style.display = 'none';
+                cartCountSpan.style.display = 'none';
+                return;
+            }
+
+            cartCountSpan.textContent = cart.length;
+            cartCountSpan.style.display = 'flex';
+
+            cartItemsDiv.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div class="d-flex justify-content-between mb-2">
+                        <h6 class="mb-0">${item.name}</h6>
+                        <button class="btn btn-sm btn-danger" onclick="removeFromCart(${item.id})">×</button>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <input type="number" class="form-control form-control-sm" style="width: 60px;" 
+                                value="${item.quantity}" min="1" 
+                                onchange="updateQuantity(${item.id}, this.value)">
+                        </div>
+                        <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            const tax = subtotal * 0.1;
+            const total = subtotal + tax;
+
+            document.getElementById('subtotal').textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+            document.getElementById('tax').textContent = `₹${tax.toLocaleString('en-IN')}`;
+            document.getElementById('total').textContent = `₹${total.toLocaleString('en-IN')}`;
+            cartSummaryDiv.style.display = 'block';
+        }
+
+        // Checkout
+        function checkout() {
+            if (cart.length === 0) return;
+
+            const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            const tax = subtotal * 0.1;
+            const total = subtotal + tax;
+            const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+            totalOrders++;
+            totalRevenue += total;
+            totalItems += itemCount;
+
+            document.getElementById('totalRevenue').textContent = '₹' + totalRevenue.toLocaleString('en-IN');
+            document.getElementById('totalOrders').textContent = totalOrders.toLocaleString('en-IN');
+            document.getElementById('totalItems').textContent = totalItems.toLocaleString('en-IN');
+            document.getElementById('avgOrder').textContent = '₹' + Math.round(totalRevenue / totalOrders).toLocaleString('en-IN');
+
+            alert('Order placed successfully!\nTotal: ₹' + total.toLocaleString('en-IN'));
+            cart = [];
+            updateCart();
+            bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('cartOffcanvas')).hide();
+        }
+
+        // Clear cart
+        document.getElementById('clearCartBtn').addEventListener('click', () => {
+            cart = [];
+            updateCart();
+        });
+
+        // Contact form
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for contacting us! We will get back to you soon.');
+            this.reset();
+        });
+
+        // Initialize
+        renderProducts();
+    </script>
+</body>
+</html>
